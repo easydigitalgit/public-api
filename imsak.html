@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imsakiyah & Puasa Ramadhan 2025</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <style>
+        /* Styling dropdown agar mirip Select2 */
+        .custom-select {
+            position: relative;
+            width: 300px;
+            font-family: Arial, sans-serif;
+        }
+
+        .select-box {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown {
+            position: absolute;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: #f0f0f0;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding: 4px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            outline: none;
+        }
+
+        .clear-btn {
+            cursor: pointer;
+            padding: 4px;
+            font-weight: bold;
+            color: #888;
+        }
+
+        .clear-btn:hover {
+            color: black;
+        }
+
+        .container{
+    max-width:64rem;
+    margin:0 auto;
+    padding:.5rem
+}
+.page-title{
+    font-size:1.25rem;
+    font-weight:700;
+    margin:1rem;
+    text-align:center
+}
+h2.section-title{
+    font-size:1.125rem;
+    font-weight:700;
+    margin:0 0 .25rem 0;
+    text-align:center
+}
+h3.section-title{
+    font-size:.95rem;
+    font-weight:300;
+    margin:0 0 1.5rem 0;
+    text-align:center
+}
+#location-title .section-title{
+    font-size:1.25rem;
+    color:#1f2937;
+    margin-bottom:1.5rem
+}
+#schedule-table-sticky{
+    background-color:#fff;
+    position:sticky;
+    top:0;
+    height:11px
+}
+#schedule-table{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:600px;
+    padding:.5rem;
+    margin:0 auto
+}
+.schedule-table{
+    font-size:1rem;
+    width:100%;
+    margin:0 auto;
+    background-color:#fff;
+    border:1px solid #e5e7eb;
+    border-collapse:collapse
+}
+.schedule-table thead{
+    background-color:#f0f8ff;
+    position:sticky;
+    top:10px
+}
+.schedule-table thead::after{
+    content:'';
+    display:block;
+    height:2px;
+    background-color:#e5e7eb;
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0
+}
+.schedule-table tr{
+    transition:background-color .2s
+}
+.schedule-table tr:hover{
+    background-color:#f0f8ff
+}
+.schedule-table th,.schedule-table td{
+    padding:.25rem 1rem;
+    border-bottom:1px solid #e5e7eb;
+    text-align:center
+}
+.select-container{
+    max-width:64rem;
+    margin:0 auto;
+    padding:.5rem;
+   
+    display:flex;
+   
+    gap:1rem
+}
+.select-container .select{
+    font-size:.75rem;
+    width:175px;
+    flex-shrink:0
+}
+.select-label{
+    display:block;
+    font-size:.85rem;
+    font-weight:500;
+    color:#374151;
+    margin-bottom:.5rem;
+    text-align:left
+}
+.select-field{
+    width:100%;
+    padding:.5rem;
+    border:1px solid #e5e7eb;
+    border-radius:.375rem;
+    box-shadow:0 1px 2px 0 rgba(0,0,0,.05)
+}
+.select2-results__option{
+    font-size:.85rem
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    text-align:left
+}
+@media only screen and (max-width:768px){
+    .select-container .select{
+        width:150px
+    }
+    .page-title{
+        font-size:1rem!important
+    }
+    h2.section-title{
+        font-size:.75rem!important
+    }
+    h3.section-title{
+        font-size:.65rem!important;
+        margin:0 0 .75rem 0!important
+    }
+    #schedule-table{
+        width:auto!important
+    }
+    .schedule-table{
+        font-size:.7rem!important;
+        width:auto!important;
+        padding:0;
+        margin:0
+    }
+    .select2-results__option{
+        font-size:.7rem
+    }
+    .schedule-table th,.schedule-table td{
+        padding:.25rem .25rem!important
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="contaier">
+
+    <h1 class="page-title">Imsakiyah & Puasa Ramadhan 2025</h1>
+
+        <div class="custom-select select-container">
+            <!-- Input untuk pencarian & tampilan teks yang dipilih -->
+            <div class="select-box" onclick="toggleDropdown()">
+                <span id="selected-value">Pilih Kota</span>
+            </div>
+
+            <!-- Dropdown -->
+            <div id="dropdown" class="dropdown">
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="Cari kota..." oninput="filterOptions()">
+                    <span class="clear-btn" onclick="clearSearch()">✖</span>
+                </div>
+                <div id="options-container">
+                    <div class="dropdown-item">Memuat data...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="schedule-table" class="hidden">
+        <h2 class="section-title">Jadwal Imsakiyah 2025</h2>
+        <h3 class="section-title selected-city"></h3>
+        <div id="schedule-table-sticky" class="hidden">
+        </div>
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Imsak</th>
+                    <th>Subuh</th>
+                    <th>Dzuhur</th>
+                    <th>Ashar</th>
+                    <th>Maghrib</th>
+                    <th>Isya</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                  
+                
+                   
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let cities = []; // Menyimpan data kota
+       // const id = '0228';
+       
+       
+       
+        const cacheDuration = 60 * 60 * 1000; // 1 jam dalam milidetik
+                
+        getJadwalSholat('0228');
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("https://api.myquran.com/v2/sholat/kota/semua") // Ganti dengan URL JSON jika dari server
+                .then(response => response.json())
+                .then(data => {
+                    cities = data.data;
+                    populateOptions(cities);
+                });
+
+            document.addEventListener("click", function(event) {
+                if (!event.target.closest(".custom-select")) {
+                    document.getElementById("dropdown").classList.remove("show");
+                }
+            });
+        });
+
+        function toggleDropdown() {
+            document.getElementById("dropdown").classList.toggle("show");
+            document.getElementById("search-input").focus();
+        }
+
+        function populateOptions(data) {
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+            data.forEach(city => {
+                const div = document.createElement("div");
+                div.classList.add("dropdown-item");
+                div.textContent = city.lokasi;
+                div.setAttribute("data-id", city.id);
+                div.onclick = () => onSelect(city.id, city.lokasi);
+                container.appendChild(div);
+            });
+        }
+
+
+        function filterOptions() {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const filtered = cities.filter(city => city.lokasi.toLowerCase().includes(query));
+            populateOptions(filtered);
+        }
+
+        function clearSearch() {
+            document.getElementById("search-input").value = "";
+            populateOptions(cities);
+        }
+
+        function selectOption(id, text) {
+            document.getElementById("selected-value").textContent = text;
+            document.getElementById("dropdown").classList.remove("show");
+        }
+
+        function onSelect(id, text) {
+            // Update tampilan dropdown
+            document.getElementById("selected-value").textContent = text;
+            document.getElementById("dropdown").classList.remove("show");
+            console.log('id', id);
+            console.log('text', text);
+           
+
+           // Pastikan ID kota sudah didefinisikan
+ 
+
+            // Panggil fungsi untuk mendapatkan jadwal sholat
+            getJadwalSholat(id);
+
+        }
+
+
+        // Fungsi untuk mendapatkan data dari API atau cache
+function getJadwalSholat(id) {
+    const cacheKey = `jadwalSholat_${id}_2025_03`; // Kunci unik untuk cache
+    const cacheExpiryKey = `${cacheKey}_expiry`;
+   
+    const cachedData = localStorage.getItem(cacheKey);
+    const cachedExpiry = localStorage.getItem(cacheExpiryKey);
+   
+
+    if (cachedData && cachedExpiry && new Date().getTime() < cachedExpiry) {
+        console.log("Menggunakan data dari cache");
+        const parsedData = JSON.parse(cachedData);
+
+        // Tampilkan lokasi dan daerah dari cache
+        document.querySelector('.selected-city').textContent = parsedData.lokasi + ', ' + parsedData.daerah;
+
+        // Tampilkan jadwal sholat
+        renderJadwal(parsedData.jadwal);
+    } else {
+        console.log("Mengambil data dari API...");
+        fetch(`https://api.myquran.com/v2/sholat/jadwal/${id}/2025/03`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status && data.data && data.data.jadwal) {
+                    // Simpan data ke localStorage dengan timestamp kadaluarsa
+                    // Simpan seluruh objek `data.data` ke dalam cache
+                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
+                    localStorage.setItem(cacheExpiryKey, new Date().getTime() + cacheDuration);
+
+                    console.log('lokasi ', data.data.lokasi);
+                    document.querySelector('.selected-city').textContent = data.data.lokasi +', '+data.data.daerah;
+                    renderJadwal(data.data.jadwal);
+                } else {
+                    document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Data tidak ditemukan</td></tr>`;
+                }
+            })
+            .catch(error => {
+                console.error("Terjadi kesalahan:", error);
+                document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Gagal memuat data</td></tr>`;
+            });
+    }
+}
+
+
+        // Fungsi untuk menampilkan data dalam tabel
+        function renderJadwal(jadwal) {
+            const scheduleTable = document.querySelector('.schedule-table');
+            scheduleTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Hari</th>
+                        <th>Tanggal</th>
+                        <th>Imsak</th>
+                        <th>Subuh</th>
+                        <th>Dzuhur</th>
+                        <th>Ashar</th>
+                        <th>Maghrib</th>
+                        <th>Isya</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${jadwal
+                        .filter(item => !item.date.endsWith("-03-31")) // Hapus tanggal 31 Maret
+                        .map(item => {
+                            const [hari, tanggal] = item.tanggal.split(', ');
+                            return `
+                                <tr>
+                                    <td>${hari}</td>
+                                    <td>${tanggal}</td>
+                                    <td>${item.imsak}</td>
+                                    <td>${item.subuh}</td>
+                                    <td>${item.dzuhur}</td>
+                                    <td>${item.ashar}</td>
+                                    <td>${item.maghrib}</td>
+                                    <td>${item.isya}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                </tbody>
+            `;
+        }
+    </script>
+
+</body>
+</html>
