@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Halaman HTML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 4px 6px 15px rgba(0,0,0,0.15);
+        }
+        .card a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        .card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pilih Halaman</h1>
+    <div class="container" id="file-list"></div>
+
+    <script>
+        // Daftar file HTML dalam repository
+        const files = [
+            { name: "Imsakiyah 2025", file: "imsak.html" },
+            { name: "Jadwal Sholat", file: "sholat.html" },
+            
+        ];
+
+        // Ambil elemen container
+        const fileList = document.getElementById("file-list");
+
+        // Generate card untuk setiap file HTML
+        files.forEach(({ name, file }) => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            const title = document.createElement("h3");
+            title.textContent = name;
+
+            const link = document.createElement("a");
+            link.href = file;
+            link.textContent = "Buka Halaman";
+
+            card.appendChild(title);
+            card.appendChild(link);
+            fileList.appendChild(card);
+        });
+    </script>
+</body>
+</html>
