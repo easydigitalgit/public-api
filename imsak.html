@@ -271,13 +271,10 @@ h3.section-title{
 
     <script>
         let cities = []; // Menyimpan data kota
-       // const id = '0228';
-       
-       
-       
+      
         const cacheDuration = 60 * 60 * 1000; // 1 jam dalam milidetik
                 
-        getJadwalSholat('0228');
+        getJadwalSholat('0228'); //default kota medan
         document.addEventListener("DOMContentLoaded", function() {
             fetch("https://api.myquran.com/v2/sholat/kota/semua") // Ganti dengan URL JSON jika dari server
                 .then(response => response.json())
@@ -334,11 +331,7 @@ h3.section-title{
             document.getElementById("dropdown").classList.remove("show");
             console.log('id', id);
             console.log('text', text);
-           
-
-           // Pastikan ID kota sudah didefinisikan
- 
-
+          
             // Panggil fungsi untuk mendapatkan jadwal sholat
             getJadwalSholat(id);
 
@@ -346,47 +339,47 @@ h3.section-title{
 
 
         // Fungsi untuk mendapatkan data dari API atau cache
-function getJadwalSholat(id) {
-    const cacheKey = `jadwalSholat_${id}_2025_03`; // Kunci unik untuk cache
-    const cacheExpiryKey = `${cacheKey}_expiry`;
-   
-    const cachedData = localStorage.getItem(cacheKey);
-    const cachedExpiry = localStorage.getItem(cacheExpiryKey);
-   
+        function getJadwalSholat(id) {
+            const cacheKey = `jadwalSholat_${id}_2025_03`; // Kunci unik untuk cache
+            const cacheExpiryKey = `${cacheKey}_expiry`;
+        
+            const cachedData = localStorage.getItem(cacheKey);
+            const cachedExpiry = localStorage.getItem(cacheExpiryKey);
+        
 
-    if (cachedData && cachedExpiry && new Date().getTime() < cachedExpiry) {
-        console.log("Menggunakan data dari cache");
-        const parsedData = JSON.parse(cachedData);
+            if (cachedData && cachedExpiry && new Date().getTime() < cachedExpiry) {
+                console.log("Menggunakan data dari cache");
+                const parsedData = JSON.parse(cachedData);
 
-        // Tampilkan lokasi dan daerah dari cache
-        document.querySelector('.selected-city').textContent = parsedData.lokasi + ', ' + parsedData.daerah;
+                // Tampilkan lokasi dan daerah dari cache
+                document.querySelector('.selected-city').textContent = parsedData.lokasi + ', ' + parsedData.daerah;
 
-        // Tampilkan jadwal sholat
-        renderJadwal(parsedData.jadwal);
-    } else {
-        console.log("Mengambil data dari API...");
-        fetch(`https://api.myquran.com/v2/sholat/jadwal/${id}/2025/03`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.status && data.data && data.data.jadwal) {
-                    // Simpan data ke localStorage dengan timestamp kadaluarsa
-                    // Simpan seluruh objek `data.data` ke dalam cache
-                    localStorage.setItem(cacheKey, JSON.stringify(data.data));
-                    localStorage.setItem(cacheExpiryKey, new Date().getTime() + cacheDuration);
+                // Tampilkan jadwal sholat
+                renderJadwal(parsedData.jadwal);
+            } else {
+                console.log("Mengambil data dari API...");
+                fetch(`https://api.myquran.com/v2/sholat/jadwal/${id}/2025/03`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status && data.data && data.data.jadwal) {
+                            // Simpan data ke localStorage dengan timestamp kadaluarsa
+                            // Simpan seluruh objek `data.data` ke dalam cache
+                            localStorage.setItem(cacheKey, JSON.stringify(data.data));
+                            localStorage.setItem(cacheExpiryKey, new Date().getTime() + cacheDuration);
 
-                    console.log('lokasi ', data.data.lokasi);
-                    document.querySelector('.selected-city').textContent = data.data.lokasi +', '+data.data.daerah;
-                    renderJadwal(data.data.jadwal);
-                } else {
-                    document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Data tidak ditemukan</td></tr>`;
-                }
-            })
-            .catch(error => {
-                console.error("Terjadi kesalahan:", error);
-                document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Gagal memuat data</td></tr>`;
-            });
-    }
-}
+                            console.log('lokasi ', data.data.lokasi);
+                            document.querySelector('.selected-city').textContent = data.data.lokasi +', '+data.data.daerah;
+                            renderJadwal(data.data.jadwal);
+                        } else {
+                            document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Data tidak ditemukan</td></tr>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Terjadi kesalahan:", error);
+                        document.querySelector('.schedule-table').innerHTML = `<tr><td colspan="8">Gagal memuat data</td></tr>`;
+                    });
+            }
+        }
 
 
         // Fungsi untuk menampilkan data dalam tabel
